@@ -1,14 +1,16 @@
 package ru.robofinance.test.project.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class AddressDto implements Serializable {
     private BigInteger id;
     private String country;
