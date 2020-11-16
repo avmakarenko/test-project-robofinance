@@ -1,23 +1,20 @@
-package ru.robofinance.test.project.service;
+package ru.robofinance.test.project.core.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.robofinance.test.project.domain.Address;
-import ru.robofinance.test.project.domain.Customer;
-import ru.robofinance.test.project.dto.AddressDto;
-import ru.robofinance.test.project.dto.CustomerDto;
-import ru.robofinance.test.project.exception.CustomerNotFindException;
-import ru.robofinance.test.project.repository.AddressRepository;
-import ru.robofinance.test.project.repository.CustomerRepository;
+import ru.robofinance.test.project.core.domain.Address;
+import ru.robofinance.test.project.core.domain.Customer;
+import ru.robofinance.test.project.core.repository.AddressRepository;
+import ru.robofinance.test.project.core.repository.CustomerRepository;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -40,7 +37,7 @@ class CustomerServiceTest {
         when(customerRepository.save(any())).thenReturn(customer);
         when(addressRepository.save(any())).thenReturn(address);
 
-        customerService.createCustomer(createCustomerDto());
+        customerService.createCustomer(createCustomer());
 
         verify(customerRepository, times(1)).save(any());
         verify(addressRepository, times(2)).save(any());
@@ -51,15 +48,20 @@ class CustomerServiceTest {
         when(customerRepository.findById(any())).thenReturn(java.util.Optional.of(customer));
         when(addressRepository.save(any())).thenReturn(address);
 
-        customerService.updateCustomer(createCustomerDto());
+        customerService.updateCustomer(createCustomer());
 
         verify(customerRepository, times(1)).findById(any());
         verify(addressRepository, times(1)).save(any());
     }
 
     @Test
-    void updateCustomerShouldThrowException() {
-        assertThrows(CustomerNotFindException.class, ()->customerService.updateCustomer(createCustomerDto()));
+    void updateCustomerShouldNotFindCustomer() {
+        when(customerRepository.findById(any())).thenReturn(Optional.empty());
+
+        customerService.updateCustomer(createCustomer());
+
+        verify(customerRepository, times(1)).findById(any());
+        verify(addressRepository, times(0)).save(any());
     }
 
     @Test
@@ -71,11 +73,11 @@ class CustomerServiceTest {
         verify(customerRepository, times(1)).findAllByFirstNameAndLastName(anyString(), anyString());
     }
 
-    private CustomerDto createCustomerDto() {
-        return CustomerDto.builder()
+    private Customer createCustomer() {
+        return Customer.builder()
                 .id(BigInteger.valueOf(1))
-                .actualAddress(createAddressDto(BigInteger.valueOf(1)))
-                .registeredAddress(createAddressDto(BigInteger.valueOf(2)))
+                .actualAddress(createAddress(BigInteger.valueOf(1)))
+                .registeredAddress(createAddress(BigInteger.valueOf(2)))
                 .firstName("first-name")
                 .lastName("last-name")
                 .middleName("middle-name")
@@ -83,8 +85,8 @@ class CustomerServiceTest {
                 .build();
     }
 
-    private AddressDto createAddressDto(BigInteger bigInteger) {
-        return AddressDto.builder()
+    private Address createAddress(BigInteger bigInteger) {
+        return Address.builder()
                 .id(bigInteger)
                 .city("city")
                 .country("country")

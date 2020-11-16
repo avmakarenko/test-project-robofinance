@@ -1,18 +1,17 @@
-package ru.robofinance.test.project.domain;
+package ru.robofinance.test.project.core.dto;
 
-import lombok.Data;
+import lombok.*;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "address")
-@Data
-public class Address implements Serializable {
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+@Getter
+@Setter
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
+public class AddressDto implements Serializable {
     private BigInteger id;
     private String country;
     private String region;
@@ -23,4 +22,3 @@ public class Address implements Serializable {
     private LocalDateTime created;
     private LocalDateTime modified;
 }
-

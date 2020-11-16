@@ -1,6 +1,6 @@
-package ru.robofinance.test.project.domain;
+package ru.robofinance.test.project.core.domain;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,7 +8,11 @@ import java.math.BigInteger;
 
 @Entity
 @Table(name = "customer")
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
